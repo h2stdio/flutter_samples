@@ -11,8 +11,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/models/offerings_wrapper.dart';
 
-class PurchaseScreen extends StatelessWidget {
-  const PurchaseScreen({super.key});
+class PaywallScreen extends StatelessWidget {
+  const PaywallScreen({super.key});
 
   static const _gap = SizedBox(height: 60);
 

@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
-import 'package:game_template/src/settings/purchase/purchase_screen.dart';
+import 'package:game_template/src/revenue_cat/paywall_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logging/logging.dart';
@@ -183,7 +183,7 @@ class MyApp extends StatelessWidget {
             GoRoute(
               path: 'purchase',
               builder: (context, state) =>
-              const PurchaseScreen(key: Key('purchase')),
+              const PaywallScreen(key: Key('purchase')),
             ),
           ]),
     ],
