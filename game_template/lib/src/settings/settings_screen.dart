@@ -106,6 +106,16 @@ class SettingsScreen extends StatelessWidget {
               },
             ),
             _gap,
+            Consumer<RevenueCatPurchaseController?>(
+                builder: (context, inAppPurchase, child) {
+              return Column(
+                children: [
+                  Text("User ID: "),
+                  SelectableText(
+                      "${inAppPurchase?.customerInfo?.originalAppUserId}")
+                ],
+              );
+            }),
           ],
         ),
         rectangularMenuArea: ElevatedButton(
