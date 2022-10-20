@@ -3,8 +3,10 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../audio/audio_controller.dart';
 import '../audio/sounds.dart';
@@ -28,17 +30,26 @@ class MainMenuScreen extends StatelessWidget {
       body: ResponsiveScreen(
         mainAreaProminence: 0.45,
         squarishMainArea: Center(
-          child: Transform.rotate(
-            angle: -0.1,
-            child: const Text(
-              'Flutter Game Template!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Permanent Marker',
-                fontSize: 55,
-                height: 1,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                "assets/images/flutter_svq.jpg",
+                width: 100,
               ),
-            ),
+              Transform.rotate(
+                angle: -0.1,
+                child: const Text(
+                  'Flutter SVQ IAP DEMO',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Permanent Marker',
+                    fontSize: 55,
+                    height: 1,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         rectangularMenuArea: Column(
@@ -75,6 +86,60 @@ class MainMenuScreen extends StatelessWidget {
               child: const Text('Settings'),
             ),
             _gap,
+            Consumer<RevenueCatPurchaseController?>(
+              builder: (context, inAppPurchase, child) {
+                if (inAppPurchase?.proPurchase.active ?? false) {
+                  return GestureDetector(
+                    onTap: _getYourReward,
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: palette.proColor.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: palette.proColor,
+                            width: 1,
+                          )),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                "assets/images/cat.png",
+                                width: 100,
+                              ),
+                              Column(
+                                children: [
+                                  SizedBox(
+                                    width: 130,
+                                    child: Text(
+                                      "MEOW!\nNow you're a PRO!",
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                      onPressed: _getYourReward,
+                                      child: Text("Claim your 🎁")),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  return ElevatedButton(
+                    onPressed: () => GoRouter.of(context).go('/purchase'),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(palette.proColor)),
+                    child: const Text('Wanna be a Pro?'),
+                  );
+                }
+              },
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 32),
               child: ValueListenableBuilder<bool>(
@@ -95,6 +160,9 @@ class MainMenuScreen extends StatelessWidget {
       ),
     );
   }
+
+  void _getYourReward() =>
+      launchUrlString("https://www.youtube.com/watch?v=tPrbskmPdSU");
 
   /// Prevents the game from showing game-services-related menu items
   /// until we're sure the player is signed in.

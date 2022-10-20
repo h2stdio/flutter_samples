@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart' hide Level;
 import 'package:provider/provider.dart';
@@ -15,7 +16,6 @@ import '../audio/sounds.dart';
 import '../game_internals/level_state.dart';
 import '../games_services/games_services.dart';
 import '../games_services/score.dart';
-import '../in_app_purchase/in_app_purchase.dart';
 import '../level_selection/levels.dart';
 import '../player_progress/player_progress.dart';
 import '../style/confetti.dart';
@@ -127,7 +127,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
 
     // Preload ad for the win screen.
     final adsRemoved =
-        context.read<InAppPurchaseController?>()?.adRemoval.active ?? false;
+        context.read<RevenueCatPurchaseController?>()?.proPurchase.active ?? false;
     if (!adsRemoved) {
       final adsController = context.read<AdsController?>();
       adsController?.preloadAd();

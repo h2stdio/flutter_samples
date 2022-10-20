@@ -27,7 +27,9 @@ dependencies:
   firebase_crashlytics: ^2.8.1  # Error reporting
   games_services: ^3.0.0  # Achievements and leaderboards
   google_mobile_ads: ^2.0.1  # Ads
-  in_app_purchase: ^3.0.1  # In-app purchases
+  purchases_flutter: 4.3.0
+  url_launcher: any
+
 
 dev_dependencies:
   flutter_test:
@@ -44,6 +46,11 @@ flutter:
     - assets/images/
     - assets/music/
     - assets/sfx/
+    - assets/Permanent_Marker/
+    - assets/images/3x/
+    - assets/images/2x/
+    - assets/images/3.5x/
+    - assets/
 
   fonts:
     - family: Permanent Marker

@@ -3,13 +3,13 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../ads/ads_controller.dart';
 import '../ads/banner_ad_widget.dart';
 import '../games_services/score.dart';
-import '../in_app_purchase/in_app_purchase.dart';
 import '../style/palette.dart';
 import '../style/responsive_screen.dart';
 
@@ -25,7 +25,7 @@ class WinGameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final adsControllerAvailable = context.watch<AdsController?>() != null;
     final adsRemoved =
-        context.watch<InAppPurchaseController?>()?.adRemoval.active ?? false;
+        context.watch<RevenueCatPurchaseController?>()?.proPurchase.active ?? false;
     final palette = context.watch<Palette>();
 
     const gap = SizedBox(height: 10);

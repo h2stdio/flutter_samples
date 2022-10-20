@@ -3,10 +3,10 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../in_app_purchase/in_app_purchase.dart';
 import '../player_progress/player_progress.dart';
 import '../style/palette.dart';
 import '../style/responsive_screen.dart';
@@ -58,7 +58,7 @@ class SettingsScreen extends StatelessWidget {
                 onSelected: () => settings.toggleMusicOn(),
               ),
             ),
-            Consumer<InAppPurchaseController?>(
+            Consumer<RevenueCatPurchaseController?>(
                 builder: (context, inAppPurchase, child) {
               if (inAppPurchase == null) {
                 // In-app purchases are not supported yet.
@@ -69,22 +69,29 @@ class SettingsScreen extends StatelessWidget {
 
               Widget icon;
               VoidCallback? callback;
-              if (inAppPurchase.adRemoval.active) {
+              if (inAppPurchase.proPurchase.active) {
                 icon = const Icon(Icons.check);
-              } else if (inAppPurchase.adRemoval.pending) {
+              } else if (inAppPurchase.proPurchase.pending) {
                 icon = const CircularProgressIndicator();
               } else {
-                icon = const Icon(Icons.ad_units);
+                icon = Icon(
+                  Icons.star,
+                  color: palette.proColor,
+                );
                 callback = () {
-                  inAppPurchase.buy();
+                  GoRouter.of(context).go('/purchase');
                 };
               }
               return _SettingsLine(
-                'Remove ads',
+                inAppPurchase.proPurchase.active
+                    ? "You're a PRO"
+                    : 'Become a PRO',
                 icon,
                 onSelected: callback,
+                color: palette.proColor,
               );
             }),
+            _gap,
             _SettingsLine(
               'Reset progress',
               const Icon(Icons.delete),
@@ -154,12 +161,12 @@ class _NameChangeLine extends StatelessWidget {
 
 class _SettingsLine extends StatelessWidget {
   final String title;
-
   final Widget icon;
+  final Color? color;
 
   final VoidCallback? onSelected;
 
-  const _SettingsLine(this.title, this.icon, {this.onSelected});
+  const _SettingsLine(this.title, this.icon, {this.onSelected, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -172,10 +179,10 @@ class _SettingsLine extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(title,
-                style: const TextStyle(
-                  fontFamily: 'Permanent Marker',
-                  fontSize: 30,
-                )),
+                style: TextStyle(
+                    fontFamily: 'Permanent Marker',
+                    fontSize: 30,
+                    color: color)),
             const Spacer(),
             icon,
           ],

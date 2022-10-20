@@ -4,12 +4,15 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logging/logging.dart';
 
 import 'preloaded_banner_ad.dart';
 
 /// Allows showing ads. A facade for `package:google_mobile_ads`.
 class AdsController {
   final MobileAds _instance;
+
+  static final Logger _log = Logger('AdsController');
 
   PreloadedBannerAd? _preloadedAd;
 
@@ -26,7 +29,9 @@ class AdsController {
 
   /// Initializes the injected [MobileAds.instance].
   Future<void> initialize() async {
-    await _instance.initialize();
+    var status = await _instance.initialize();
+    _log.info(
+        "AdmobStatus: ${status.adapterStatuses.keys.map<String>((key) => "$key:${status.adapterStatuses[key]!.description}").join(", ")}");
   }
 
   /// Starts preloading an ad to be used later.

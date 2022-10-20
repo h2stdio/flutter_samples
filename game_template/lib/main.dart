@@ -7,11 +7,16 @@
 // import 'package:firebase_core/firebase_core.dart';
 // import 'firebase_options.dart';
 
+import 'dart:io';
+
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
+import 'package:game_template/src/settings/purchase/purchase_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +26,6 @@ import 'src/audio/audio_controller.dart';
 import 'src/crashlytics/crashlytics.dart';
 import 'src/games_services/games_services.dart';
 import 'src/games_services/score.dart';
-import 'src/in_app_purchase/in_app_purchase.dart';
 import 'src/level_selection/level_selection_screen.dart';
 import 'src/level_selection/levels.dart';
 import 'src/main_menu/main_menu_screen.dart';
@@ -63,7 +67,7 @@ Future<void> main() async {
 }
 
 /// Without logging and crash reporting, this would be `void main()`.
-void guardedMain() {
+Future<void> guardedMain() async {
   if (kReleaseMode) {
     // Don't log anything below warnings in production.
     Logger.root.level = Level.WARNING;
@@ -77,7 +81,7 @@ void guardedMain() {
   WidgetsFlutterBinding.ensureInitialized();
 
   _log.info('Going full screen');
-  SystemChrome.setEnabledSystemUIMode(
+  await SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.edgeToEdge,
   );
 
@@ -85,13 +89,13 @@ void guardedMain() {
   //       Read the README for more info on each integration.
 
   AdsController? adsController;
-  // if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
-  //   /// Prepare the google_mobile_ads plugin so that the first ad loads
-  //   /// faster. This can be done later or with a delay if startup
-  //   /// experience suffers.
-  //   adsController = AdsController(MobileAds.instance);
-  //   adsController.initialize();
-  // }
+  if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
+    /// Prepare the google_mobile_ads plugin so that the first ad loads
+    /// faster. This can be done later or with a delay if startup
+    /// experience suffers.
+    adsController = AdsController(MobileAds.instance);
+    await adsController.initialize();
+  }
 
   GamesServicesController? gamesServicesController;
   // if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
@@ -100,15 +104,16 @@ void guardedMain() {
   //     ..initialize();
   // }
 
-  InAppPurchaseController? inAppPurchaseController;
-  // if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
-  //   inAppPurchaseController = InAppPurchaseController(InAppPurchase.instance)
-  //     // Subscribing to [InAppPurchase.instance.purchaseStream] as soon
-  //     // as possible in order not to miss any updates.
-  //     ..subscribe();
-  //   // Ask the store what the player has bought already.
-  //   inAppPurchaseController.restorePurchases();
-  // }
+  RevenueCatPurchaseController? inAppPurchaseController;
+  if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
+    inAppPurchaseController = RevenueCatPurchaseController();
+    await inAppPurchaseController.init();
+    // Subscribing to [InAppPurchase.] as soon
+    // as possible in order not to miss any updates.
+    inAppPurchaseController.subscribe();
+    // Ask the store what the player has bought already.
+    inAppPurchaseController.restorePurchases();
+  }
 
   runApp(
     MyApp(
@@ -175,6 +180,11 @@ class MyApp extends StatelessWidget {
               builder: (context, state) =>
                   const SettingsScreen(key: Key('settings')),
             ),
+            GoRoute(
+              path: 'purchase',
+              builder: (context, state) =>
+              const PurchaseScreen(key: Key('purchase')),
+            ),
           ]),
     ],
   );
@@ -185,7 +195,7 @@ class MyApp extends StatelessWidget {
 
   final GamesServicesController? gamesServicesController;
 
-  final InAppPurchaseController? inAppPurchaseController;
+  final RevenueCatPurchaseController? inAppPurchaseController;
 
   final AdsController? adsController;
 
@@ -213,7 +223,7 @@ class MyApp extends StatelessWidget {
           Provider<GamesServicesController?>.value(
               value: gamesServicesController),
           Provider<AdsController?>.value(value: adsController),
-          ChangeNotifierProvider<InAppPurchaseController?>.value(
+          ChangeNotifierProvider<RevenueCatPurchaseController?>.value(
               value: inAppPurchaseController),
           Provider<SettingsController>(
             lazy: false,

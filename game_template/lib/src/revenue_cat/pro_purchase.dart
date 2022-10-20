@@ -3,10 +3,10 @@
 // BSD-style license that can be found in the LICENSE file.
 
 /// Represents the state of an in-app purchase of ad removal such as
-/// [AdRemovalPurchase.notStarted()] or [AdRemovalPurchase.active()].
-class AdRemovalPurchase {
+/// [ProPurchase.notStarted()] or [ProPurchase.active()].
+class ProPurchase {
   /// The representation of this product on the stores.
-  static const productId = 'remove_ads';
+  static const productId = 'PRO';
 
   /// This is `true` if the `remove_ad` product has been purchased and verified.
   /// Do not show ads if so.
@@ -19,22 +19,22 @@ class AdRemovalPurchase {
   /// that error.
   final Object? error;
 
-  const AdRemovalPurchase.active() : this._(true, false, null);
+  const ProPurchase.active() : this._(true, false, null);
 
-  const AdRemovalPurchase.error(Object error) : this._(false, false, error);
+  const ProPurchase.error(Object error) : this._(false, false, error);
 
-  const AdRemovalPurchase.notStarted() : this._(false, false, null);
+  const ProPurchase.notStarted() : this._(false, false, null);
 
-  const AdRemovalPurchase.pending() : this._(false, true, null);
+  const ProPurchase.pending() : this._(false, true, null);
 
-  const AdRemovalPurchase._(this.active, this.pending, this.error);
+  const ProPurchase._(this.active, this.pending, this.error);
 
   @override
   int get hashCode => Object.hash(active, pending, error);
 
   @override
   bool operator ==(Object other) =>
-      other is AdRemovalPurchase &&
+      other is ProPurchase &&
       other.active == active &&
       other.pending == pending &&
       other.error == error;
