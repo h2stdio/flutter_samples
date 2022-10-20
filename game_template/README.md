@@ -1,3 +1,5 @@
+# NOTE: This is a modified version of https://github.com/flutter/samples
+
 A starter game in Flutter with all the bells and whistles
 of a mobile (iOS & Android) game including the following features:
 
