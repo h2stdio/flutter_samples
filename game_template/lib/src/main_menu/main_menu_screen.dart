@@ -162,7 +162,7 @@ class MainMenuScreen extends StatelessWidget {
   }
 
   void _getYourReward() =>
-      launchUrlString("https://www.youtube.com/watch?v=tPrbskmPdSU");
+      launchUrlString("https://www.youtube.com/shorts/tPrbskmPdSU");
 
   /// Prevents the game from showing game-services-related menu items
   /// until we're sure the player is signed in.
