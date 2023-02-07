@@ -39,7 +39,7 @@ class WinGameScreen extends StatelessWidget {
             if (adsControllerAvailable && !adsRemoved) ...[
               const Expanded(
                 child: Center(
-                  child: BannerAdWidget(),
+                  child: BannerAdWidget(big: true,),
                 ),
               ),
             ],

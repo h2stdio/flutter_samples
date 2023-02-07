@@ -9,9 +9,9 @@ import audioplayers_darwin
 import firebase_core
 import firebase_crashlytics
 import games_services
-import path_provider_macos
+import path_provider_foundation
 import purchases_flutter
-import shared_preferences_macos
+import shared_preferences_foundation
 import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

@@ -3,6 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:game_template/src/audio/audio_controller.dart';
+import 'package:game_template/src/audio/sounds.dart';
 import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +24,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsController>();
     final palette = context.watch<Palette>();
+    final audioController = context.watch<AudioController>();
 
     return Scaffold(
       backgroundColor: palette.backgroundSettings,
@@ -34,11 +37,10 @@ class SettingsScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Permanent Marker',
-                fontSize: 55,
+                fontSize: 45,
                 height: 1,
               ),
             ),
-            _gap,
             const _NameChangeLine(
               'Name',
             ),
@@ -79,7 +81,11 @@ class SettingsScreen extends StatelessWidget {
                   color: palette.proColor,
                 );
                 callback = () {
-                  GoRouter.of(context).go('/purchase');
+
+
+                  audioController.playSfx(SfxType.meow);
+
+                  GoRouter.of(context).push('/purchase');
                 };
               }
               return _SettingsLine(
@@ -90,6 +96,25 @@ class SettingsScreen extends StatelessWidget {
                 onSelected: callback,
                 color: palette.proColor,
               );
+            }),
+
+            /// Restore purchases
+            Consumer<RevenueCatPurchaseController?>(
+                builder: (context, inAppPurchase, child) {
+              if (inAppPurchase != null && inAppPurchase.proPurchase.active) {
+                // In-app purchases are not supported yet.
+                // Go to lib/main.dart and uncomment the lines that create
+                // the InAppPurchaseController.
+                return const SizedBox.shrink();
+              } else {
+                return _SettingsLine(
+                  "Restore purchases",
+                  Icon(Icons.restart_alt),
+                  onSelected: () {
+                    inAppPurchase!.restorePurchases();
+                  },
+                );
+              }
             }),
             _gap,
             _SettingsLine(
@@ -112,7 +137,9 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   Text("User ID: "),
                   SelectableText(
-                      "${inAppPurchase?.customerInfo?.originalAppUserId}")
+                    "${inAppPurchase?.customerInfo?.originalAppUserId}",
+                    textAlign: TextAlign.center,
+                  )
                 ],
               );
             }),

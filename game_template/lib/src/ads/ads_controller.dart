@@ -48,11 +48,7 @@ class AdsController {
     _preloadedAd =
         PreloadedBannerAd(size: AdSize.mediumRectangle, adUnitId: adUnitId);
 
-    // Wait a bit so that calling at start of a new screen doesn't have
-    // adverse effects on performance.
-    Future<void>.delayed(const Duration(seconds: 1)).then((_) {
-      return _preloadedAd!.load();
-    });
+    _preloadedAd!.load();
   }
 
   /// Allows caller to take ownership of a [PreloadedBannerAd].

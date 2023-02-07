@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,13 @@ class MainMenuScreen extends StatelessWidget {
     final audioController = context.watch<AudioController>();
 
     return Scaffold(
+      appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarBrightness: Brightness.light, // For iOS (dark icons)
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       backgroundColor: palette.backgroundMain,
       body: ResponsiveScreen(
         mainAreaProminence: 0.45,
@@ -40,7 +48,7 @@ class MainMenuScreen extends StatelessWidget {
               Transform.rotate(
                 angle: -0.1,
                 child: const Text(
-                  'Flutter SVQ IAP DEMO',
+                  '💸 Making Money with Flutter',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Permanent Marker',
@@ -131,7 +139,10 @@ class MainMenuScreen extends StatelessWidget {
                   );
                 } else {
                   return ElevatedButton(
-                    onPressed: () => GoRouter.of(context).go('/purchase'),
+                    onPressed: () {
+                      audioController.playSfx(SfxType.meow);
+                      GoRouter.of(context).push('/purchase');
+                    },
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(palette.proColor)),
@@ -153,16 +164,19 @@ class MainMenuScreen extends StatelessWidget {
               ),
             ),
             _gap,
-            const Text('Music by Mr Smith'),
+            const Text(
+              "Source Code by \nFlutter project &\nH2Stdio.com",
+              textAlign: TextAlign.center,
+            ),
             _gap,
+            const Text('Music by\nMr Smith'),
           ],
         ),
       ),
     );
   }
 
-  void _getYourReward() =>
-      launchUrlString("https://www.youtube.com/shorts/tPrbskmPdSU");
+  void _getYourReward() => launchUrlString("https://youtu.be/K_nmnwZHTbk");
 
   /// Prevents the game from showing game-services-related menu items
   /// until we're sure the player is signed in.

@@ -13,8 +13,8 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
 import 'package:game_template/src/revenue_cat/paywall_screen.dart';
+import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logging/logging.dart';
@@ -111,8 +111,6 @@ Future<void> guardedMain() async {
     // Subscribing to [InAppPurchase.] as soon
     // as possible in order not to miss any updates.
     inAppPurchaseController.subscribe();
-    // Ask the store what the player has bought already.
-    inAppPurchaseController.restorePurchases();
   }
 
   runApp(
@@ -183,7 +181,7 @@ class MyApp extends StatelessWidget {
             GoRoute(
               path: 'purchase',
               builder: (context, state) =>
-              const PaywallScreen(key: Key('purchase')),
+                  const PaywallScreen(key: Key('purchase')),
             ),
           ]),
     ],
@@ -255,6 +253,7 @@ class MyApp extends StatelessWidget {
 
           return MaterialApp.router(
             title: 'Flutter Demo',
+            debugShowCheckedModeBanner: false,
             theme: ThemeData.from(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: palette.darkPen,

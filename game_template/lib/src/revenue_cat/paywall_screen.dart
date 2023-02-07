@@ -27,19 +27,35 @@ class PaywallScreen extends StatelessWidget {
         squarishMainArea: ListView(
           padding: EdgeInsets.zero,
           children: [
-            Image.asset(
-              "assets/images/cat.png",
-              width: 100,
-              height: 140,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "assets/images/cat.png",
+                  width: 100,
+                  height: 100,
+                ),
+                Expanded(
+                  child: const Text(
+                    'Wanna play\nALL LEVELS?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Permanent Marker',
+                      fontSize: 32,
+                      height: 1,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const Text(
-              'Become a PRO!',
+            Text(
+              'Subscribe to PRO!',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'Permanent Marker',
-                fontSize: 55,
-                height: 1,
-              ),
+                  fontFamily: 'Permanent Marker',
+                  fontSize: 40,
+                  height: 1,
+                  color: palette.proColor),
             ),
             Consumer<RevenueCatPurchaseController?>(
                 builder: (context, inAppPurchase, child) {
@@ -62,8 +78,11 @@ class PaywallScreen extends StatelessWidget {
                         // We have the offerings, let's display them in the paywall
                         return Column(children: [
                           Text(
-                            "Wanna be a PRO like me? Take a look and choose the subscription that better fits your needs",
+                            "Take a look and choose the subscription that better fits your needs",
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           _gap,
                           ...?snapshot.data!.current?.availablePackages
@@ -76,7 +95,7 @@ class PaywallScreen extends StatelessWidget {
                                       decoration: BoxDecoration(
                                           color: palette.trueWhite,
                                           borderRadius:
-                                              BorderRadius.circular(20),
+                                              BorderRadius.circular(15),
                                           border: Border.all(
                                               color: p.packageType !=
                                                       PackageType.twoMonth
@@ -95,21 +114,22 @@ class PaywallScreen extends StatelessWidget {
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: palette.proColor,
-                                                  fontSize: 20),
+                                                  fontSize: 16),
                                             ),
                                           Text(
                                             p.storeProduct.description,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 28),
+                                                fontSize: 20),
                                             textAlign: TextAlign.center,
                                           ),
                                           ElevatedButton(
                                             onPressed: () {
-                                              inAppPurchase!.buy(p).then(
-                                                  (value) =>
-                                                      GoRouter.of(context)
-                                                          .pop());
+                                              inAppPurchase!
+                                                  .buy(p)
+                                                  .then((value) {
+                                                GoRouter.of(context).pop();
+                                              });
                                             },
                                             child: Text(
                                                 "Subscribe for ${p.storeProduct.priceString}"),
@@ -132,14 +152,6 @@ class PaywallScreen extends StatelessWidget {
                             style: TextStyle(
                               fontStyle: FontStyle.italic,
                               color: palette.darkPen,
-                            ),
-                          ),
-                          _gap,
-                          Text(
-                            "Restore Purchases",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: palette.proColor,
                             ),
                           ),
                           _gap,

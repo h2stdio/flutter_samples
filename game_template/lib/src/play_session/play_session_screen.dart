@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:game_template/src/ads/banner_ad_widget.dart';
 import 'package:game_template/src/revenue_cat/revenue_cat_purchase_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart' hide Level;
@@ -43,6 +44,11 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final adsControllerAvailable = context.watch<AdsController?>() != null;
+    final adsRemoved =
+        context.watch<RevenueCatPurchaseController?>()?.proPurchase.active ??
+            false;
+
     final palette = context.watch<Palette>();
 
     return MultiProvider(
@@ -58,61 +64,69 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
         ignoring: _duringCelebration,
         child: Scaffold(
           backgroundColor: palette.backgroundPlaySession,
-          body: Stack(
-            children: [
-              Center(
-                // This is the entirety of the "game".
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: InkResponse(
-                        onTap: () => GoRouter.of(context).push('/settings'),
-                        child: Image.asset(
-                          'assets/images/settings.png',
-                          semanticLabel: 'Settings',
+          body: SafeArea(
+            child: Stack(
+              children: [
+                Center(
+                  // This is the entirety of the "game".
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (adsControllerAvailable && !adsRemoved) ...[
+                        Center(
+                          child: BannerAdWidget(big: false,),
+                        ),
+                      ],
+                      const Spacer(),
+                      Text(
+                        "Level ${widget.level.number}",
+                        style: TextStyle(
+                          fontFamily: 'Permanent Marker',
+                          fontSize: 55,
+                          height: 1,
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                    Text('Drag the slider to ${widget.level.difficulty}%'
-                        ' or above!'),
-                    Consumer<LevelState>(
-                      builder: (context, levelState, child) => Slider(
-                        label: 'Level Progress',
-                        autofocus: true,
-                        value: levelState.progress / 100,
-                        onChanged: (value) =>
-                            levelState.setProgress((value * 100).round()),
-                        onChangeEnd: (value) => levelState.evaluate(),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 20),
                       ),
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => GoRouter.of(context).pop(),
-                          child: const Text('Back'),
+                      Text('Drag the slider to ${widget.level.difficulty}%'
+                          ' or above!'),
+                      Consumer<LevelState>(
+                        builder: (context, levelState, child) => Slider(
+                          label: 'Level Progress',
+                          autofocus: true,
+                          value: levelState.progress / 100,
+                          onChanged: (value) =>
+                              levelState.setProgress((value * 100).round()),
+                          onChangeEnd: (value) => levelState.evaluate(),
                         ),
                       ),
-                    ),
-                  ],
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () => GoRouter.of(context).pop(),
+                            child: const Text('Back'),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox.expand(
-                child: Visibility(
-                  visible: _duringCelebration,
-                  child: IgnorePointer(
-                    child: Confetti(
-                      isStopped: !_duringCelebration,
+                SizedBox.expand(
+                  child: Visibility(
+                    visible: _duringCelebration,
+                    child: IgnorePointer(
+                      child: Confetti(
+                        isStopped: !_duringCelebration,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -125,13 +139,14 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
 
     _startOfPlay = DateTime.now();
 
-    // Preload ad for the win screen.
-    final adsRemoved =
-        context.read<RevenueCatPurchaseController?>()?.proPurchase.active ?? false;
-    if (!adsRemoved) {
-      final adsController = context.read<AdsController?>();
-      adsController?.preloadAd();
-    }
+    // // Preload ad for the win screen.
+    // final adsRemoved =
+    //     context.read<RevenueCatPurchaseController?>()?.proPurchase.active ??
+    //         false;
+    // if (!adsRemoved) {
+    //   final adsController = context.read<AdsController?>();
+    //   adsController?.preloadAd();
+    // }
   }
 
   Future<void> _playerWon() async {

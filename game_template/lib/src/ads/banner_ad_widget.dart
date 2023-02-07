@@ -31,7 +31,8 @@ import 'preloaded_banner_ad.dart';
 /// namely the `anchored_adaptive_example.dart` file:
 /// https://github.com/googleads/googleads-mobile-flutter/blob/main/packages/google_mobile_ads/example/lib/anchored_adaptive_example.dart
 class BannerAdWidget extends StatefulWidget {
-  const BannerAdWidget({super.key});
+  final bool big;
+  const BannerAdWidget({super.key, required this.big});
 
   @override
   State<BannerAdWidget> createState() => _BannerAdWidgetState();
@@ -40,7 +41,6 @@ class BannerAdWidget extends StatefulWidget {
 class _BannerAdWidgetState extends State<BannerAdWidget> {
   static final _log = Logger('BannerAdWidget');
 
-  static const useAnchoredAdaptiveSize = false;
   BannerAd? _bannerAd;
   _LoadingState _adLoadingState = _LoadingState.initial;
 
@@ -120,7 +120,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
     AdSize size;
 
-    if (useAnchoredAdaptiveSize) {
+    if (!widget.big) {
       final AnchoredAdaptiveBannerAdSize? adaptiveSize =
           await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
               MediaQuery.of(context).size.width.truncate());

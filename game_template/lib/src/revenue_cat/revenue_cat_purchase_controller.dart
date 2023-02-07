@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:game_template/src/revenue_cat/pro_purchase.dart';
 import 'package:logging/logging.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -27,7 +27,7 @@ class RevenueCatPurchaseController extends ChangeNotifier {
   CustomerInfo? get customerInfo => _customerInfo;
 
   Future<void> init() async {
-    await Purchases.setDebugLogsEnabled(true);
+    await Purchases.setLogLevel(kDebugMode ? LogLevel.debug : LogLevel.info);
 
     PurchasesConfiguration? configuration;
     if (Platform.isAndroid) {
@@ -80,16 +80,33 @@ class RevenueCatPurchaseController extends ChangeNotifier {
     }
   }
 
-  void restorePurchases() {
-    // FIXME Restore purchases
+  Future<void> restorePurchases() async {
+    _log.info("Restoring purchases...");
+    try {
+      // Pending status
+      _proPurchase = ProPurchase.pending();
+      notifyListeners();
+      // Perform purchase
+      await Purchases.restorePurchases();
+      _log.info("Purchases restored!");
+    } on PlatformException catch (e) {
+      var errorCode = PurchasesErrorHelper.getErrorCode(e);
+      _log.severe("Error restoring purchases: $errorCode");
+      if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
+        _proPurchase = ProPurchase.error("Error code: $errorCode");
+        notifyListeners();
+      } else {
+        _proPurchase = ProPurchase.notStarted();
+        notifyListeners();
+      }
+    }
   }
 
   Future<void> _listenToPurchaseUpdated(CustomerInfo customerInfo) async {
     _log.info(() => 'New CustomerInfo instance received: $customerInfo');
     _customerInfo = customerInfo;
 
-    if (customerInfo.entitlements.active
-        .containsKey(ProPurchase.productId)) {
+    if (customerInfo.entitlements.active.containsKey(ProPurchase.productId)) {
       _log.info("PRO enabled");
       _proPurchase = const ProPurchase.active();
       _customerInfo = customerInfo;

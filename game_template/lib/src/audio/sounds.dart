@@ -43,16 +43,24 @@ List<String> soundTypeToFilename(SfxType type) {
       return const [
         'swishswish1.mp3',
       ];
+    case SfxType.meow:
+      return const [
+        'meow1.mp3',
+        'meow2.mp3',
+        'meow3.mp3',
+      ];
   }
 }
 
 /// Allows control over loudness of different SFX types.
 double soundTypeToVolume(SfxType type) {
   switch (type) {
-    case SfxType.huhsh:
-      return 0.4;
     case SfxType.wssh:
       return 0.2;
+    case SfxType.huhsh:
+      return 0.4;
+    case SfxType.meow:
+      return 0.6;
     case SfxType.buttonTap:
     case SfxType.congrats:
     case SfxType.erase:
@@ -68,4 +76,5 @@ enum SfxType {
   congrats,
   erase,
   swishSwish,
+  meow,
 }
